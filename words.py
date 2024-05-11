@@ -32,5 +32,4 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
 
 async def get_langs(source):
     data = pd.read_json(f'{base_path}/data/{source}.json', orient='records')
-    data = data['lang']
-    return Response(data.to_json(orient='records', media_type='application/json'))
+    return data['lang'].unique().tolist()
