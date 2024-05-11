@@ -27,6 +27,10 @@ async def get_tweets(lang, stype, group, from_, to_) -> TweetsOutSchema:
         data = data[data['lang'] == 'all']
     elif lang == 'all':
         data = data[data['lang'] != lang]
+        data = data[data['lang'] != 'zxx']
+        countings = data.groupby('lang').count().reset_index()[['lang', 'value']]
+        countings = countings[countings['value']>=countings['value'].quantile(0.85)]
+        data = data[data['lang'].isin(countings['lang'])]
     else:
         data = data[data['lang'] == lang] 
         
