@@ -7,7 +7,7 @@ from fastapi import Response
 
 base_path = os.path.dirname(__file__)
 
-async def get_word_frequency(source, lang, min_frequency, from_, to_) -> WordsOutSchema:
+async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_type) -> WordsOutSchema:
     data = pd.read_json(f'{base_path}/data/{source}.json', orient='records')
         
     if min_frequency==-1:
@@ -29,3 +29,8 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_) -> WordsOu
         data = data.groupby(['word', 'lang']).sum(numeric_only=True).reset_index()
         
     return Response(data.to_json(orient="records"), media_type="application/json")
+
+async def get_langs(source):
+    data = pd.read_json(f'{base_path}/data/{source}.json', orient='records')
+    data = data['lang']
+    return Response(data.to_json(orient='records', media_type='application/json'))
