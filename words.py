@@ -7,7 +7,7 @@ import numpy as np
 
 base_path = os.path.dirname(__file__)
 
-async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_type) -> WordsOutSchema:
+async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_type, aggregate) -> WordsOutSchema:
     data = pd.read_json(f'{base_path}/data/{source}.json', orient='records')
         
     data = data[data['lang'] == lang] 
@@ -25,14 +25,16 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
     data['created_at'] = data['created_at'].dt.date
     data = data[data['created_at']>=from_]
     data = data[data['created_at']<=to_]
+    
         
-    if from_ != to_:
+    if from_ != to_ and aggregate:
         data = data.groupby(['word', 'lang']).sum(numeric_only=True).reset_index()
         
     if min_frequency==-1:
         data = data[data['frequency']>=data['frequency'].quantile(0.95)]
     else: 
         data = data[data['frequency']>=min_frequency]
+        
     return Response(data.to_json(orient="records"), media_type="application/json")
 
 async def get_langs(source):
