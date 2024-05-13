@@ -16,11 +16,8 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
         data['word'] = data['hashtag']
         data.drop(columns='hashtag', inplace=True)
         
-    match (filter_type):
-        case 'tf_idf':
+    if filter_type == 'tf_idf':
             data = tf_idf(data)
-        case 'none':
-            data = data
     
     data['created_at'] = data['created_at'].dt.date
     data = data[data['created_at']>=from_]
@@ -52,9 +49,8 @@ async def check_present(source, from_, to_, lang, min_frequency, filter_type):
         data['word'] = data['hashtag']
         data.drop(columns='hashtag', inplace=True)
         
-    match (filter_type):    
-        case 'tf_idf':
-            data = tf_idf(data)
+    if filter_type == 'tf_idf':
+        data = tf_idf(data)
             
     data['created_at'] = data['created_at'].dt.date
     data = data[data['created_at']>=from_]
