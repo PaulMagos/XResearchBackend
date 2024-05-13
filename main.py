@@ -31,8 +31,3 @@ async def get_langs_words(source: str='words'):
 @app.get('/check_words_presence', response_model=bool)
 async def get_langs_words(source: str='words', lang: str = 'Italian', min_frequency: int=-1, from_: date_type=first_day, to_: date_type=date_type.today(), filter_type: str='tf_idf') -> bool:
     return await check_present(source=source, from_=from_, to_=to_, lang=lang, min_frequency=min_frequency, filter_type=filter_type)
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
