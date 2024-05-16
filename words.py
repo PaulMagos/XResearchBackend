@@ -37,6 +37,8 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
         data = data.pivot_table(index='created_at', columns='word', values='frequency', fill_value=0).reset_index()
         # Rename the columns to match the desired format
         data.columns.name = None
+        data[data.columns[1:]] = data[data.columns[1:]].astype('int64')
+        return Response(data.to_csv(index=False), media_type='text/csv')
         
     return Response(data.to_json(orient="records"), media_type="application/json")
 
