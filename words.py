@@ -26,11 +26,17 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
         
     if from_ != to_ and aggregate:
         data = data.groupby(['word', 'lang']).sum(numeric_only=True).reset_index()
-        
+                
     if min_frequency==-1:
         data = data[data['frequency']>=data['frequency'].quantile(0.95)]
     else: 
         data = data[data['frequency']>=min_frequency]
+        
+    if not aggregate:
+        # Pivot the DataFrame
+        data = data.pivot_table(index='created_at', columns='word', values='frequency', fill_value=0).reset_index()
+        # Rename the columns to match the desired format
+        data.columns.name = None
         
     return Response(data.to_json(orient="records"), media_type="application/json")
 
