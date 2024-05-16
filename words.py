@@ -7,7 +7,7 @@ import numpy as np
 
 base_path = os.path.dirname(__file__)
 
-async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_type, aggregate) -> WordsOutSchema:
+async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_type, aggregate, pivot) -> WordsOutSchema:
     data = pd.read_json(f'{base_path}/data/{source}.json', orient='records')
         
     data = data[data['lang'] == lang] 
@@ -32,7 +32,7 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
     else: 
         data = data[data['frequency']>=min_frequency]
         
-    if not aggregate:
+    if pivot:
         # Pivot the DataFrame
         data = data.pivot_table(index='created_at', columns='word', values='frequency', fill_value=0).reset_index()
         # Rename the columns to match the desired format

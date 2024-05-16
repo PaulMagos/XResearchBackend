@@ -21,8 +21,8 @@ async def get_tweets(lang: str = '', type: str = '', group: str='week', from_: d
     return await get_tweets_func(lang=lang, stype=type, group=group, from_=from_, to_=to_)
 
 @app.get('/get_words', response_model=TweetsOutSchema)
-async def get_words(source: str='words', lang: str = 'Italian', min_frequency: int=-1, from_: date_type=first_day, to_: date_type=date_type.today(), filter_type: str='tf_idf', aggregate: bool=True) -> TweetsOutSchema:
-    return await get_word_frequency(source=source, lang=lang, min_frequency=min_frequency, from_=from_, to_=to_, filter_type=filter_type, aggregate=aggregate)
+async def get_words(source: str='words', lang: str = 'Italian', min_frequency: int=-1, from_: date_type=first_day, to_: date_type=date_type.today(), filter_type: str='tf_idf', aggregate: bool=True, pivot: bool=False) -> TweetsOutSchema:
+    return await get_word_frequency(source=source, lang=lang, min_frequency=min_frequency, from_=from_, to_=to_, filter_type=filter_type, aggregate=aggregate, pivot=pivot)
 
 @app.get('/get_langs_words')
 async def get_langs_words(source: str='words'):
