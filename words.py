@@ -38,7 +38,7 @@ async def get_word_frequency(source, lang, min_frequency, from_, to_, filter_typ
         # Rename the columns to match the desired format
         data.columns.name = None
         data[data.columns[1:]] = data[data.columns[1:]].astype('int64')
-        return Response(data.to_csv(index=False), media_type='text/csv"')
+        # return Response(data.to_json(index=False, orient="records"), media_type='application/json"')
         
     return Response(data.to_json(orient="records"), media_type="application/json")
 
