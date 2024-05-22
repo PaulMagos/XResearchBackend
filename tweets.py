@@ -51,11 +51,21 @@ async def get_tweets(lang, stype, group, from_, to_, pivot) -> TweetsOutSchema:
         pivot_on = 'sentiment' 
         if lang == 'all' :
             pivot_on = 'lang' 
-        # Pivot the DataFrame
-        data = data.pivot_table(index='created_at', columns=pivot_on, values='value', fill_value=0).reset_index()
-        # Rename the columns to match the desired format
-        data.columns.name = None
-        data[data.columns[1:]] = data[data.columns[1:]].astype('int64')
         
-    
+        # Sort the DataFrame by 'created_at' and 'sentiment'
+        data = data.sort_values(by=['created_at', pivot_on])
+
+        # Calculate cumulative sum for each 'created_at'
+        data['cumulative_sum'] = data.groupby('created_at')['value'].cumsum()
+
+        # Calculate 'start' as the shifted cumulative sum
+        data['start'] = data.groupby('created_at')['cumulative_sum'].shift(1).fillna(0).astype(int)
+
+        # The 'end' is the cumulative sum itself
+        data['end'] = data['cumulative_sum']
+
+        # Drop the 'cumulative_sum' column as it's no longer needed
+        data = data.drop(columns=['cumulative_sum'])
+        
     return Response(data.to_json(orient="records"), media_type="application/json")
+
