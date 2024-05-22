@@ -7,7 +7,7 @@ from fastapi import Response
 
 base_path = os.path.dirname(__file__)
 
-async def get_tweets(lang, stype, group, from_, to_) -> TweetsOutSchema:
+async def get_tweets(lang, stype, group, from_, to_, pivot) -> TweetsOutSchema:
     if not os.path.exists(f'{base_path}/data/tweets_reparsed.json'):
         data = pd.read_json(f'{base_path}/data/tweets.json', orient='records')
         melted_df = pd.melt(data, id_vars=['index', 'created_at', 'lang'], var_name='sentiment', value_name='value')
@@ -46,4 +46,16 @@ async def get_tweets(lang, stype, group, from_, to_) -> TweetsOutSchema:
         
     data = data[data['created_at']>=from_]
     data = data[data['created_at']<=to_]
+    
+    if pivot:
+        pivot_on = 'sentiment' 
+        if lang == 'all' :
+            pivot_on = 'lang' 
+        # Pivot the DataFrame
+        data = data.pivot_table(index='created_at', columns=pivot_on, values='value', fill_value=0).reset_index()
+        # Rename the columns to match the desired format
+        data.columns.name = None
+        data[data.columns[1:]] = data[data.columns[1:]].astype('int64')
+        
+    
     return Response(data.to_json(orient="records"), media_type="application/json")

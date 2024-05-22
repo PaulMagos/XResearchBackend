@@ -17,8 +17,8 @@ app.add_middleware(
 first_day = datetime.strptime('2024-01-06', '%Y-%m-%d').date()
 
 @app.get('/get_tweets', response_model=TweetsOutSchema)
-async def get_tweets(lang: str = '', type: str = '', group: str='week', from_: date_type=first_day, to_: date_type=date_type.today()) -> TweetsOutSchema:
-    return await get_tweets_func(lang=lang, stype=type, group=group, from_=from_, to_=to_)
+async def get_tweets(lang: str = '', type: str = '', group: str='week', from_: date_type=first_day, to_: date_type=date_type.today(), pivot: bool=False) -> TweetsOutSchema:
+    return await get_tweets_func(lang=lang, stype=type, group=group, from_=from_, to_=to_, pivot=pivot)
 
 @app.get('/get_words', response_model=TweetsOutSchema)
 async def get_words(source: str='words', lang: str = 'Italian', min_frequency: int=-1, from_: date_type=first_day, to_: date_type=date_type.today(), filter_type: str='tf_idf', aggregate: bool=True, pivot: bool=False) -> TweetsOutSchema:
